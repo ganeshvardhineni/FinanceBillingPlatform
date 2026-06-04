@@ -1,0 +1,106 @@
+﻿@model FinanceBilling.Core.Entities.Invoice
+@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>@Model.InvoiceNumber</h2>
+    <span class="badge bg-primary fs-6">@Model.Status</span>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Customer Details</h5>
+                <p><strong>Name:</strong> @Model.CustomerName</p>
+                <p><strong>Email:</strong> @Model.CustomerEmail</p>
+                <p><strong>Due Date:</strong> @Model.DueDate.ToString("dd MMM yyyy")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Amount Summary</h5>
+                <p><strong>Total Amount:</strong> ₹@Model.TotalAmount.ToString("N2")</p>
+                <p><strong>Paid Amount:</strong> ₹@Model.PaidAmount.ToString("N2")</p>
+                <p class="text-danger"><strong>Balance Due:</strong> ₹@Model.BalanceDue.ToString("N2")</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4>Items</h4>
+<table class="table table-bordered mb-4">
+    <thead class="table-light">
+        <tr>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Unit Price</th>
+            <th>Line Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Description</td>
+                <td>@item.Quantity</td>
+                <td>₹@item.UnitPrice.ToString("N2")</td>
+                <td>₹@item.LineTotal.ToString("N2")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>Payments</h4>
+<table class="table table-bordered mb-4">
+    <thead class="table-light">
+        <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Reference</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var payment in Model.Payments)
+        {
+            <tr>
+                <td>@payment.PaymentDate.ToString("dd MMM yyyy")</td>
+                <td>₹@payment.Amount.ToString("N2")</td>
+                <td>@payment.PaymentMethod</td>
+                <td>@payment.TransactionReference</td>
+                <td>@payment.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex gap-2">
+    @if (Model.Status == FinanceBilling.Core.Enums.InvoiceStatus.Draft)
+    {
+        <a asp-action="AddItem" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Add Item</a>
+        <form asp-action="Send" method="post" style="display:inline">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" class="btn btn-primary">Send Invoice</button>
+        </form>
+    }
+    @if (Model.Status != FinanceBilling.Core.Enums.InvoiceStatus.Paid &&
+         Model.Status != FinanceBilling.Core.Enums.InvoiceStatus.Cancelled)
+    {
+        <a asp-action="ProcessPayment" asp-route-id="@Model.Id" class="btn btn-success">Process Payment</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

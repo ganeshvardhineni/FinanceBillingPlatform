@@ -1,0 +1,6 @@
+@FinanceBilling.API_HostAddress = http://localhost:5051
+
+GET {{FinanceBilling.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,41 @@
+﻿AZURE CLOUD ARCHITECTURE - Finance Billing Platform
+=====================================================
+
+HOSTING MODEL
+--------------
+- FinanceBilling.API     → Azure App Service (Linux, .NET 8)
+- FinanceBilling.Web     → Azure App Service (Linux, .NET 8)
+- Database               → Azure SQL Database (General Purpose tier)
+- Secrets                → Azure Key Vault (JWT secret, connection strings)
+- Logs                   → Azure Application Insights
+
+CI/CD PIPELINE
+---------------
+GitHub → GitHub Actions → Build → Test → Publish → Azure App Service
+
+DOCKER STRATEGY
+----------------
+- Multi-stage Dockerfile reduces final image size
+- Base image: mcr.microsoft.com/dotnet/aspnet:8.0
+- Build image: mcr.microsoft.com/dotnet/sdk:8.0
+- API and Web run as separate containers
+- Environment variables injected at runtime via Azure App Settings
+
+SECURITY
+---------
+- JWT tokens validated on every API request
+- HTTPS enforced via Azure App Service SSL
+- Connection strings stored in Azure Key Vault
+- Role-based access: Admin, Manager, Viewer
+
+AI AGENT (MCP) - US12 CONCEPTUAL
+----------------------------------
+Endpoint: POST /api/agent/summarize-invoice
+Purpose: Accept an invoice ID, fetch invoice details, use an LLM
+         to generate a human-readable payment status summary and
+         recommended action (e.g. "Invoice INV-2026-AAA001 is 
+         overdue by 5 days with ₹11,000 balance. Recommend 
+         immediate follow-up with customer.")
+Implementation: Model Context Protocol (MCP) server would
+         connect to the InvoicesController, retrieve data,
+         and pass it to an AI model for summarization.

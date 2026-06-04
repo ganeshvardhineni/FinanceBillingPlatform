@@ -1,0 +1,2 @@
+﻿CREATE DATABASE FinanceBillingDB;
+GO

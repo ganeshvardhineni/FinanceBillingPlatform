@@ -1,0 +1,63 @@
+﻿name: Finance Billing CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore FinanceBillingPlatform.sln
+
+      - name: Build solution
+        run: dotnet build FinanceBillingPlatform.sln --no-restore -c Release
+
+      - name: Run unit tests
+        run: dotnet test FinanceBilling.Tests/FinanceBilling.Tests.csproj --no-build -c Release --verbosity normal
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish API
+        run: dotnet publish FinanceBilling.API/FinanceBilling.API.csproj -c Release -o ./publish
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: finance-billing-api
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ./publish
+
+      - name: Publish Web App
+        run: dotnet publish FinanceBilling.Web/FinanceBilling.Web.csproj -c Release -o ./publish-web
+
+      - name: Deploy Web to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: finance-billing-web
+          publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
+          package: ./publish-web

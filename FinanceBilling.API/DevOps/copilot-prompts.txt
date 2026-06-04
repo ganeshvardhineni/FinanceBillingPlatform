@@ -1,0 +1,54 @@
+﻿GITHUB COPILOT PROMPTS LOG
+Finance & Billing Platform Capstone
+=====================================
+
+US1 - OOP & SOLID
+------------------
+1. "Generate a C# abstract base entity class with Id, CreatedAt, UpdatedAt, IsDeleted properties"
+2. "Create an Invoice entity with encapsulated status transitions using factory pattern in C#"
+3. "Generate a generic IRepository interface with async CRUD operations using C# generics"
+4. "Implement SOLID dependency inversion by creating IInvoiceService and IInvoiceRepository interfaces"
+5. "Create an InvoiceService class that depends on abstractions not concrete implementations"
+
+US2 - TDD & Exception Handling
+--------------------------------
+6. "Generate xUnit unit tests for Invoice entity following Arrange-Act-Assert pattern"
+7. "Write unit tests using Moq to mock IInvoiceRepository and test InvoiceService in isolation"
+8. "Create custom exception classes InvoiceNotFoundException and PaymentExceedsBalanceException"
+9. "Generate FluentAssertions test assertions for checking invoice status transitions"
+10. "Write negative test cases for invalid invoice creation inputs"
+
+US3 - SQL Database Design
+--------------------------
+11. "Generate normalized MS SQL DDL script for Invoices, Payments, Customers, InvoiceItems tables"
+12. "Create SQL trigger to auto-update TotalAmount on Invoices when InvoiceItems are modified"
+13. "Write a SQL trigger for audit logging of Invoice status changes"
+14. "Generate SQL indexes for optimizing invoice queries by status and due date"
+
+US4 - EF Core & ADO.NET
+-------------------------
+15. "Configure EF Core AppDbContext with Fluent API mappings for Invoice and Payment entities"
+16. "Implement Repository pattern using EF Core with async methods"
+17. "Write ADO.NET raw SQL reader class for invoice summary reports"
+18. "Configure EF Core to ignore computed properties and map private setters"
+
+US5-US7 - MVC & Razor Pages
+-----------------------------
+19. "Generate ASP.NET Core MVC InvoiceController with CRUD actions and proper routing"
+20. "Create Razor views for Invoice list, create, details with Bootstrap 5 styling"
+21. "Add Data Annotation validations to ViewModel classes for server-side validation"
+22. "Implement jQuery client-side validation with unobtrusive validation"
+
+US8-US9 - Web API & JWT
+------------------------
+23. "Generate RESTful Web API controller for Invoices with proper HTTP verbs and status codes"
+24. "Implement JWT token generation service in ASP.NET Core"
+25. "Configure JWT Bearer authentication with role-based authorization in Program.cs"
+26. "Add Swagger/OpenAPI documentation with JWT security definition"
+27. "Create global exception handling middleware for Web API"
+
+US10-US12 - DevOps & AI
+------------------------
+28. "Generate multi-stage Dockerfile for ASP.NET Core 8 Web API"
+29. "Create GitHub Actions CI/CD YAML for .NET 8 build, test, and Azure deployment"
+30. "Conceptualize an MCP AI agent endpoint for invoice ticket summarization"

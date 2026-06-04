@@ -1,0 +1,127 @@
+﻿@model IEnumerable<FinanceBilling.Core.Entities.Invoice>
+@{
+    ViewData["Title"] = "Invoices";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Invoices</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Invoice</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div id="ajaxAlertContainer"></div>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" id="invoiceSearch" class="form-control" placeholder="Search invoices..." />
+    </div>
+    <div class="col-md-3">
+        <select id="statusFilter" class="form-select">
+            <option value="">All Statuses</option>
+            <option value="Draft">Draft</option>
+            <option value="Sent">Sent</option>
+            <option value="PartiallyPaid">Partially Paid</option>
+            <option value="Paid">Paid</option>
+            <option value="Overdue">Overdue</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+    </div>
+</div>
+
+<table class="table table-hover" id="invoiceTable">
+    <thead class="table-dark">
+        <tr>
+            <th>Invoice #</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Paid</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var invoice in Model)
+        {
+            <tr>
+                <td>@invoice.InvoiceNumber</td>
+                <td>@invoice.CustomerName</td>
+                <td>₹@invoice.TotalAmount.ToString("N2")</td>
+                <td>₹@invoice.PaidAmount.ToString("N2")</td>
+                <td>₹@invoice.BalanceDue.ToString("N2")</td>
+                <td>
+                    <span class="badge bg-@GetStatusColor(invoice.Status) invoice-status">
+                        @invoice.Status
+                    </span>
+                </td>
+                <td>@invoice.DueDate.ToString("dd MMM yyyy")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@invoice.Id"
+                       class="btn btn-sm btn-outline-primary">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="card mt-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Quick Payment (AJAX)</h5>
+    </div>
+    <div class="card-body">
+        @Html.AntiForgeryToken()
+        <form id="ajaxPaymentForm">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Invoice ID</label>
+                    <input type="number" id="ajaxInvoiceId" class="form-control" placeholder="Enter invoice ID" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" id="ajaxAmount" class="form-control" step="0.01" placeholder="0.00" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Payment Method</label>
+                    <select id="ajaxPaymentMethod" class="form-select">
+                        <option value="">-- Select --</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="UPI">UPI</option>
+                        <option value="NEFT">NEFT</option>
+                        <option value="RTGS">RTGS</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-success w-100">Process Payment</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/invoice.js"></script>
+}
+
+@functions {
+    string GetStatusColor(FinanceBilling.Core.Enums.InvoiceStatus status) => status switch
+    {
+        FinanceBilling.Core.Enums.InvoiceStatus.Draft => "secondary",
+        FinanceBilling.Core.Enums.InvoiceStatus.Sent => "primary",
+        FinanceBilling.Core.Enums.InvoiceStatus.PartiallyPaid => "warning",
+        FinanceBilling.Core.Enums.InvoiceStatus.Paid => "success",
+        FinanceBilling.Core.Enums.InvoiceStatus.Overdue => "danger",
+        FinanceBilling.Core.Enums.InvoiceStatus.Cancelled => "dark",
+        _ => "secondary"
+    };
+}

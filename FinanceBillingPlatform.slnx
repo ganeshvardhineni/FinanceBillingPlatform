@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="FinanceBilling.API/FinanceBilling.API.csproj" />
+  <Project Path="FinanceBilling.Core/FinanceBilling.Core.csproj" />
+  <Project Path="FinanceBilling.Infrastructure/FinanceBilling.Infrastructure.csproj" />
+  <Project Path="FinanceBilling.Tests/FinanceBilling.Tests.csproj" />
+  <Project Path="FinanceBilling.Web/FinanceBilling.Web.csproj" />
+</Solution>

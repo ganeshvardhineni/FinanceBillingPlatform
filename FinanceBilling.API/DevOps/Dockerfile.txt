@@ -1,0 +1,25 @@
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY ["FinanceBilling.API/FinanceBilling.API.csproj", "FinanceBilling.API/"]
+COPY ["FinanceBilling.Core/FinanceBilling.Core.csproj", "FinanceBilling.Core/"]
+COPY ["FinanceBilling.Infrastructure/FinanceBilling.Infrastructure.csproj", "FinanceBilling.Infrastructure/"]
+
+RUN dotnet restore "FinanceBilling.API/FinanceBilling.API.csproj"
+
+COPY . .
+WORKDIR "/src/FinanceBilling.API"
+RUN dotnet build "FinanceBilling.API.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "FinanceBilling.API.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "FinanceBilling.API.dll"]
